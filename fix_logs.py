@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+
+
+import lib
+import argparse
+import sys
+
+
+__about__ = '''
+Written for those that did not Fork properly
+'''
+
+
+__description__ = '''
+Simple Python script that attempts to fix git logs/history en-mass
+'''
+
+
+__license__ = '''
+Git Fix Logs
+Copyright (C) 2020  S0AndS0
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation; version 3 of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+'''
+
+
+if __name__ != '__main__':
+    raise NotImplementedError("Try running as a script, eg. python file-name.py --help")
+
+
+parser = argparse.ArgumentParser(description = __description__)
+
+parser.add_argument('--about',
+                    action = 'store_true',
+                    help = 'Prints info about this script and exits')
+
+parser.add_argument('--config',
+                    default = './config.json',
+                    help = 'Path to config.json file')
+
+parser.add_argument('--origin_branch',
+                    default = 'master',
+                    help = 'Git branch name to merge source `source_branch` with')
+
+parser.add_argument('--origin_remote',
+                    default = 'origin',
+                    help = 'Get remote name to push changes to')
+
+parser.add_argument('--source_branch',
+                    default = 'master',
+                    help = 'Git branch to _inject_ into `origin_branch`')
+
+parser.add_argument('--source_remote',
+                    default = 'source',
+                    help = '')
+
+parser.add_argument('--license',
+                    action = 'store_true',
+                    help = 'Prints script license and exits')
+
+parser.add_argument('--verbose',
+                    action = 'store_true',
+                    help = 'Prints command standard out if set')
+
+args_dict = vars(parser.parse_args())
+
+if args_dict['about']:
+    print(__about__)
+    sys.exit()
+
+if args_dict['license']:
+    print(__license__)
+    sys.exit()
+
+lib.main(args_dict['config'])
