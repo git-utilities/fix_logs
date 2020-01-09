@@ -27,16 +27,35 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 class GitException(Exception):
     """
     Raise error from `run` git commands
+
+    **Properties**
+
+    - `self.message` String, error message
+    - `self.status` Dictionary, returned from `run(cmd)` function
     """
 
-    def __init__(self, message, run):
+    def __init__(self, message, status):
         super(GitException, self).__init__(message)
-        self.run = run
+        self.status = status
 
 
 def run(cmd):
     """
-    Returns dict {'code': _number_, 'out': "_standard-out_", 'err': "_standard-error_"}
+    **Parameters**
+
+    - `cmd` should be a list, eg. `run(['git', 'status'])`
+
+    **Returns** dictionary similar to...
+
+        {
+            "code": _number_,
+            "out": "_standard-out_",
+            "err": "_standard-error_"
+        }
+
+    - `code` contains the exit code/status of command run
+    - `out` may contain Standard Out
+    - `err` may contain Standard Error
     """
     pipes = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = pipes.communicate()
@@ -48,9 +67,27 @@ def run(cmd):
 
 
 def git(arg_list, error_message, verbose = False):
+    """
+    **Parameters**
+
+    - `arg_list` List, Git args to send to `run(cmd)` function
+    - `error_message` String, message to print and log if errors are detected
+    - `verbose` Boolean, if `True` then prints success and failure messages
+
+    **Example**
+
+        git(['status'], "Cannot read git status", True)
+
+    **Returns** dictionary from `run(cmd)` function
+
+    **Throws/Raises** `GitException`
+
+        - if exit `code` is greater than `0`
+        - or if `err` (Standard Error) contains output
+    """
     status = run(['git'] + arg_list)
     if status['code'] > 0 or status['err']:
-        GitException(error_message, status)
+        raise GitException(error_message, status)
 
     if verbose:
         print(status['out'])
@@ -62,13 +99,47 @@ def fix(repo, configs):
     """
     Attempts to fix git log for `repo`
 
-    Expects `repo` to be similar to
+    **Parameters**
+
+    - `repo` Dictionary, similar to...
+
         {
             "dir": "_local-git-directory_",
             "source": "_remote-git-url_"
         }
 
-    Note `repo` may also overwrite following `configs`
+    - `configs` Dictionary, similar to
+
+        {
+          "fixed": "./fixed.json",
+          "failed": "./failed.json",
+          "defaults": {
+            "origin_branch": "master",
+            "origin_remote": "origin",
+            "source_branch": "master",
+            "source_remote": "source",
+            "fix_branch": "fix",
+            "fix_commit": "Fixes logs"
+          },
+          "repos": [
+            {
+              "dir": "~/git/hub/llSourcell/Bitcoin_Trading_Bot",
+              "source": "https://github.com/jaungiers/Multidimensional-LSTM-BitCoin-Time-Series.git"
+            },
+            {
+              "dir": "~/git/hub/llSourcell/How-to-Predict-Stock-Prices-Easily-Demo",
+              "source": "git@github.com:jaungiers/LSTM-Neural-Network-for-Time-Series-Prediction.git"
+            },
+            {
+              "dir": "~/git/hub/llSourcell/How_to_simulate_a_self_driving_car",
+              "source": "git@github.com:naokishibuya/car-behavioral-cloning.git"
+            }
+          ]
+        }
+
+    **Returns** dictionary similar to `run(cmd)` function output
+
+    **Note**, each individual `repo` may overwrite `default` configurations
 
     - `origin_branch`
     - `origin_remote`
@@ -149,6 +220,10 @@ def main(config_path):
     Writes fixed log to file defined by `config['fixed']`
 
     Writes failures log to file defined by `config['failed']`
+
+    **Parameters**
+
+    - `config_path` String, path to `config.json` configuration file
     """
     failed_list = []
     fixed_list = []
@@ -162,9 +237,9 @@ def main(config_path):
             failed_list.append({
                 'repository_dir': repo['dir'],
                 'message': e.message,
-                'code': e.run['code'],
-                'err': e.run['err'],
-                'out': e.run['out']
+                'code': e.status['code'],
+                'err': e.status['err'],
+                'out': e.status['out']
             })
             if configs.get('verbose'):
                 print("{message} -> {dir}".format(message = e.message, dir = repo['dir']))
