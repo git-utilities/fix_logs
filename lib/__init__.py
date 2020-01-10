@@ -159,52 +159,59 @@ def fix(repo, configs):
     source_remote = repo.get('source_remote', configs['source_remote'])
     fix_branch = repo.get('fix_branch', configs['fix_branch'])
     fix_commit = repo.get('fix_commit', configs['fix_commit'])
+    verbose = configs.get('verbose', False)
 
-    git(['remote', 'add', source_remote, repo['source']], "Cannot add remote {source}".format(**repo))
-    git(['fetch', source_remote, source_branch], "Cannot fetch {source}".format(**repo))
+    git(arg_list = ['remote', 'add', source_remote, repo['source']],
+        error_message = "Cannot add remote {source}".format(**repo),
+        verbose = verbose)
 
-    latest_hash = git(['log', '-1', '--format="%h"', "{remote}/{branch}".format(
-        remote = origin_remote,
-        branch = origin_branch)],
-        "Cannot retrieve hash for {remote}".format(remote = origin_remote))['out']
+    git(arg_list = ['fetch', source_remote, source_branch],
+        error_message = "Cannot fetch {source}".format(**repo),
+        verbose = verbose)
 
-    source_hash = git(['log', '-1', '--format="%h"', "{remote}/{branch}".format(
-        remote = source_remote,
-        branch = source_branch)],
-        "Cannot retrieve hash for {remote}".format(remote = source_remote))['out']
-
-    git(['checkout', source_hash], "Cannot checkout {remote} {hash}".format(
-        remote = source_remote,
-        hash = source_hash))
-
-    git(['checkout', '-b', "{fix_branch}".format(
-        fix_branch = fix_branch)],
-        "Cannot checkout {fix_branch}".format(
-            fix_branch = fix_branch))
-
-    git(['merge', latest_hash], "Cannot auto-merge {remote} {hash}".format(
-        remote = origin_remote,
-        hash = latest_hash))
-
-    git(['commit', '-m', "{fix_commit}".format(
-        fix_commit = fix_commit)], "Cannot commit to {fix_branch}".format(
-            fix_branch = fix_branch))
-
-    git(['checkout', "{remote}/{branch}".format(
-        remote = origin_remote,
-        branch = origin_branch)], "Cannot checkout {remote}/{branch}".format(
+    latest_hash = git(arg_list = ['log', '-1', '--format="%h"', "{remote}/{branch}".format(
             remote = origin_remote,
-            branch = origin_branch))
+            branch = origin_branch)],
+        error_message = "Cannot retrieve hash for {remote}".format(remote = origin_remote),
+        verbose = verbose)['out']
 
-    git(['merge', fix_branch], "Cannot auto-merge {fix_branch}".format(
-        fix_branch = fix_branch))
+    source_hash = git(arg_list = ['log', '-1', '--format="%h"', "{remote}/{branch}".format(
+            remote = source_remote,
+            branch = source_branch)],
+        error_message = "Cannot retrieve hash for {remote}".format(remote = source_remote),
+        verbose = verbose)['out']
 
-    git(['push', '--force', origin_remote, origin_branch], "Cannot push {remote} {branch}".format(
-        remote = origin_remote,
-        branch = origin_branch))
+    git(arg_list = ['checkout', source_hash],
+        error_message = "Cannot checkout {remote} {hash}".format(remote = source_remote, hash = source_hash),
+        verbose = verbose)
 
-    git(['branch', '--delete', fix_branch], "Cannot delete {fix_branch}".format(
-        fix_branch = fix_branch))
+    git(arg_list = ['checkout', '-b', "{fix_branch}".format(fix_branch = fix_branch)],
+        error_message = "Cannot checkout {fix_branch}".format(fix_branch = fix_branch),
+        verbose = verbose)
+
+    git(arg_list = ['merge', latest_hash],
+        error_message = "Cannot auto-merge {remote} {hash}".format(remote = origin_remote, hash = latest_hash),
+        verbose = verbose)
+
+    git(arg_list = ['commit', '-m', "{fix_commit}".format(fix_commit = fix_commit)],
+        error_message = "Cannot commit to {fix_branch}".format(fix_branch = fix_branch),
+        verbose = verbose)
+
+    git(arg_list = ['checkout', "{remote}/{branch}".format(remote = origin_remote, branch = origin_branch)],
+        error_message = "Cannot checkout {remote}/{branch}".format(remote = origin_remote, branch = origin_branch),
+        verbose = verbose)
+
+    git(arg_list = ['merge', fix_branch],
+        error_message = "Cannot auto-merge {fix_branch}".format(fix_branch = fix_branch),
+        verbose = verbose)
+
+    git(arg_list = ['push', '--force', origin_remote, origin_branch],
+        error_message = "Cannot push {remote} {branch}".format(remote = origin_remote, branch = origin_branch),
+        verbose = verbose)
+
+    git(arg_list = ['branch', '--delete', fix_branch],
+        error_message = "Cannot delete {fix_branch}".format(fix_branch = fix_branch),
+        verbose = verbose)
 
     return {
         'code': 0,
