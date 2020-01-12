@@ -108,7 +108,7 @@ def fix(repo, configs):
             "source": "_remote-git-url_"
         }
 
-    - `configs` Dictionary, similar to
+    - `configs` Dictionary, similar to...
 
         {
           "fixed": "./fixed.json",
@@ -119,7 +119,9 @@ def fix(repo, configs):
             "source_branch": "master",
             "source_remote": "source",
             "fix_branch": "fix",
-            "fix_commit": "Fixes logs"
+            "fix_commit": "Fixes logs",
+            "keep_fix_branch": false,
+            "no_push": false
           },
           "repos": [
             {
@@ -141,12 +143,14 @@ def fix(repo, configs):
 
     **Note**, each individual `repo` may overwrite `default` configurations
 
-    - `origin_branch`
-    - `origin_remote`
-    - `source_branch`
-    - `source_remote`
-    - `fix_branch`
-    - `fix_commit`
+    - `origin_branch` Git branch name to merge source `source_branch` with
+    - `origin_remote` Get remote name to push changes to
+    - `source_branch` Git branch to _inject_ into `origin_branch`
+    - `source_remote` Git remote name to fetch log corrections from
+    - `fix_branch` Git branch name to _triage_ merge conflicts with
+    - `fix_commit` Git commit message for successful merges
+    - `keep_fix_branch` If `True`, skips attempting to push to `origin_remote` after merge
+    - `no_push` If `True`, skips deleting `fix_branch` after merge
     """
     if os.path.isdir(repo['dir']) is False:
         raise TypeError("No directory at {dir}".format(**repo))
@@ -159,6 +163,10 @@ def fix(repo, configs):
     source_remote = repo.get('source_remote', configs['source_remote'])
     fix_branch = repo.get('fix_branch', configs['fix_branch'])
     fix_commit = repo.get('fix_commit', configs['fix_commit'])
+
+    no_push = repo.get('no_push', configs.get('no_push'))
+    keep_fix_branch = repo.get('keep_fix_branch', configs.get('keep_fix_branch'))
+
     verbose = configs.get('verbose', False)
 
     git(arg_list = ['remote', 'add', source_remote, repo['source']],
@@ -205,18 +213,22 @@ def fix(repo, configs):
         error_message = "Cannot auto-merge {fix_branch}".format(fix_branch = fix_branch),
         verbose = verbose)
 
-    git(arg_list = ['push', '--force', origin_remote, origin_branch],
-        error_message = "Cannot push {remote} {branch}".format(remote = origin_remote, branch = origin_branch),
-        verbose = verbose)
+    if not keep_fix_branch:
+        git(arg_list = ['branch', '--delete', fix_branch],
+            error_message = "Cannot delete {fix_branch}".format(fix_branch = fix_branch),
+            verbose = verbose)
 
-    git(arg_list = ['branch', '--delete', fix_branch],
-        error_message = "Cannot delete {fix_branch}".format(fix_branch = fix_branch),
-        verbose = verbose)
+    out_message = "Finished fixing {dir}".format(dir = repo['dir'])
+    if not no_push:
+        git(arg_list = ['push', '--force', origin_remote, origin_branch],
+            error_message = "Cannot push {remote} {branch}".format(remote = origin_remote, branch = origin_branch),
+            verbose = verbose)
+        out_message = "Skipped pushing to {remote} {branch}".format(remote = source_remote, branch = source_branch)
 
     return {
         'code': 0,
         'err': '',
-        'out': "Finished fixing {dir}".format(dir = repo['dir'])
+        'out': out_message
     }
 
 

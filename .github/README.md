@@ -106,7 +106,9 @@ vim config.json
     "source_branch": "master",
     "source_remote": "source",
     "fix_branch": "fix",
-    "fix_commit": "Fixes logs"
+    "fix_commit": "Fixes logs",
+    "keep_fix_branch": false,
+    "no_push": false
   },
   "repos": [
     {
@@ -130,7 +132,9 @@ vim config.json
     "source_branch": "master",
     "source_remote": "source",
     "fix_branch": "fix",
-    "fix_commit": "Fixes logs"
+    "fix_commit": "Fixes logs",
+    "keep_fix_branch": false,
+    "no_push": false
   },
   "repos": [
     {
@@ -166,7 +170,9 @@ vim config.json
         "source_branch": "tests",
         "source_remote": "source",
         "fix_branch": "fix-merge",
-        "fix_commit": "Fixes logs"
+        "fix_commit": "Fixes logs",
+        "keep_fix_branch": false,
+        "no_push": true
       }
     ]
 ```

@@ -62,7 +62,15 @@ parser.add_argument('--source_branch',
 
 parser.add_argument('--source_remote',
                     default = 'source',
-                    help = '')
+                    help = 'Git remote name to fetch log corrections from')
+
+parser.add_argument('--no_push',
+                    action = 'store_true',
+                    help = 'Skips attempting to push to `origin_remote` after merge')
+
+parser.add_argument('--keep_fix_branch',
+                    action = 'store_true',
+                    help = 'Skips deleting `fix_branch` after merge')
 
 parser.add_argument('--license',
                     action = 'store_true',
