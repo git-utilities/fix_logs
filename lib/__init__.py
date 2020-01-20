@@ -39,6 +39,20 @@ class GitException(Exception):
         self.status = status
 
 
+def os_cd(path):
+    """
+    A short-cut for _`cd` like_ commands
+
+    **Throws**
+
+    - `TypeError` if path does not exist
+    """
+    if os.path.isdir(path) is False:
+        raise TypeError("No directory at {path}".format(path = path))
+
+    os.chdir(os.path.abspath(path))
+
+
 def run(cmd):
     """
     **Parameters**
@@ -76,7 +90,7 @@ def git(arg_list, error_message, verbose = False):
 
     **Example**
 
-        git(['status'], "Cannot read git status", True)
+        git(['status'], "cannot read git status", True)
 
     **Returns** dictionary from `run(cmd)` function
 
@@ -95,20 +109,24 @@ def git(arg_list, error_message, verbose = False):
     return status
 
 
-def fix(repo, configs):
+def parent_directory_name(path):
     """
-    Attempts to fix git log for `repo`
+    **Notes**
+
+    This function could also be a lambda
+
+        parent_directory_name = lambda path: os.path.abspath(path).split(os.path.sep)[-2]
+    """
+    return os.path.abspath(path).split(os.path.sep)[-2]
+
+
+def consolidate_repo_configs(defaults, repo):
+    """
+    Merges `defaults` into `repo` and returns Dictionary
 
     **Parameters**
 
-    - `repo` Dictionary, similar to...
-
-        {
-            "dir": "_local-git-directory_",
-            "source": "_remote-git-url_"
-        }
-
-    - `configs` Dictionary, similar to...
+    - `defaults` Dictionary, similar to...
 
         {
           "fixed": "./fixed.json",
@@ -139,9 +157,35 @@ def fix(repo, configs):
           ]
         }
 
-    **Returns** dictionary similar to `run(cmd)` function output
+    - Expects `repo` dictionary, similar to...
 
-    **Note**, each individual `repo` may overwrite `default` configurations
+        {
+            "dir": "_local-git-directory_",
+            "source": "_remote-git-url_",
+        }
+
+
+    **Returns**, dictionary, similar to...
+
+        {
+            "dir": "_local-git-directory_",
+            "source": "_remote-git-url_",
+            "name": "_repo-name_",
+            "origin_branch": "master",
+            "origin_remote": "origin",
+            "source_branch": "master",
+            "source_remote": "source",
+            "fix_branch": "fix",
+            "fix_commit": "Fixes logs",
+            "keep_fix_branch": false,
+            "no_push": false
+        }
+
+    **Note**
+
+    New `repo['name']` is optional and defaults to parent directory name of `repo['dir']` for backwards compatibility
+
+    Each `repo` may overwrite `default` configurations for...
 
     - `origin_branch` Git branch name to merge source `source_branch` with
     - `origin_remote` Get remote name to push changes to
@@ -152,78 +196,116 @@ def fix(repo, configs):
     - `keep_fix_branch` If `True`, skips attempting to push to `origin_remote` after merge
     - `no_push` If `True`, skips deleting `fix_branch` after merge
     """
-    if os.path.isdir(repo['dir']) is False:
-        raise TypeError("No directory at {dir}".format(**repo))
+    repo_configs = {
+        "dir": repo['dir'],
+        "source": repo['source'],
+        "origin_branch": repo.get('origin_branch', defaults['origin_branch']),
+        "origin_remote": repo.get('origin_remote', defaults['origin_remote']),
+        "source_branch": repo.get('source_branch', defaults['source_branch']),
+        "source_remote": repo.get('source_remote', defaults['source_remote']),
+        "fix_branch": repo.get('fix_branch', defaults['fix_branch']),
+        "fix_commit": repo.get('fix_commit', defaults['fix_commit']),
+        "no_push": repo.get('no_push', defaults.get('no_push')),
+        "keep_fix_branch": repo.get('keep_fix_branch', defaults.get('keep_fix_branch')),
+        "verbose": defaults.get('verbose', False),
+    }
+    repo_configs['name'] = repo.get('origin_branch', parent_directory_name(repo_configs['dir'])),
 
-    os.chdir(os.path.abspath(repo['dir']))
+    return repo_configs
 
-    origin_branch = repo.get('origin_branch', configs['origin_branch'])
-    origin_remote = repo.get('origin_remote', configs['origin_remote'])
-    source_branch = repo.get('source_branch', configs['source_branch'])
-    source_remote = repo.get('source_remote', configs['source_remote'])
-    fix_branch = repo.get('fix_branch', configs['fix_branch'])
-    fix_commit = repo.get('fix_commit', configs['fix_commit'])
 
-    no_push = repo.get('no_push', configs.get('no_push'))
-    keep_fix_branch = repo.get('keep_fix_branch', configs.get('keep_fix_branch'))
+def fix(repo):
+    """
+    Attempts to fix git log for `repo`
 
-    verbose = configs.get('verbose', False)
+    **Returns** dictionary similar to `run(cmd)` function output
 
-    git(arg_list = ['remote', 'add', source_remote, repo['source']],
-        error_message = "Cannot add remote {source}".format(**repo),
-        verbose = verbose)
+    **Parameters**
 
-    git(arg_list = ['fetch', source_remote, source_branch],
-        error_message = "Cannot fetch {source}".format(**repo),
-        verbose = verbose)
+    - Expects `repo` to be a dictionary similar to...
 
-    latest_hash = git(arg_list = ['log', '-1', '--format="%h"', "{remote}/{branch}".format(
-            remote = origin_remote,
-            branch = origin_branch)],
-        error_message = "Cannot retrieve hash for {remote}".format(remote = origin_remote),
-        verbose = verbose)['out']
+        {
+            "dir": "_local-git-directory_",
+            "source": "_remote-git-url_",
+            "name": "repo-name",
+            "origin_branch": "master",
+            "origin_remote": "origin",
+            "source_branch": "master",
+            "source_remote": "source",
+            "fix_branch": "fix",
+            "fix_commit": "Fixes logs",
+            "keep_fix_branch": false,
+            "no_push": false
+        }
 
-    source_hash = git(arg_list = ['log', '-1', '--format="%h"', "{remote}/{branch}".format(
-            remote = source_remote,
-            branch = source_branch)],
-        error_message = "Cannot retrieve hash for {remote}".format(remote = source_remote),
-        verbose = verbose)['out']
+    **Raises**
+
+    - `ValueError` with message similar to...
+
+        Cannot obtain `latest_hash` or `source_hash`
+    """
+    git(arg_list = ['remote', 'add', repo['source_remote'], repo['source']],
+        error_message = "{name} cannot add `source_remote` or `source`".format(**repo),
+        verbose = repo['verbose'])
+
+    git(arg_list = ['fetch', repo['source_remote'], repo['source_branch']],
+        error_message = "{name} cannot fetch `source_remote` or `source_branch`".format(**repo),
+        verbose = repo['verbose'])
+
+    # Notice, the following two variables are probably considered _porcelain_ for Git CLI
+    latest_hash = git(
+        arg_list = ['log', '-1', '--format="%h"', "{origin_remote}/{origin_branch}".format(
+            origin_remote = repo['origin_remote'],
+            origin_branch = repo['origin_branch'])],
+        error_message = "{name} cannot retrieve hash for `origin_remote` or `origin_branch`".format(**repo),
+        verbose = repo['verbose']
+    )['out']
+
+    source_hash = git(
+        arg_list = ['log', '-1', '--format="%h"', "{source_remote}/{source_branch}".format(**repo)],
+        error_message = "{name} cannot retrieve hash for `source_remote` or `source_branch`".format(**repo),
+        verbose = repo['verbose']
+    )['out']
+
+    if not latest_hash or not source_hash:
+        ValueError("cannot obtain `latest_hash` or `source_hash`")
 
     git(arg_list = ['checkout', source_hash],
-        error_message = "Cannot checkout {remote} {hash}".format(remote = source_remote, hash = source_hash),
-        verbose = verbose)
+        error_message = "{name} cannot checkout last hash for `source_remote` or `source_remote`".format(**repo),
+        verbose = repo['verbose'])
 
-    git(arg_list = ['checkout', '-b', "{fix_branch}".format(fix_branch = fix_branch)],
-        error_message = "Cannot checkout {fix_branch}".format(fix_branch = fix_branch),
-        verbose = verbose)
+    git(arg_list = ['checkout', '-b', "{fix_branch}".format(fix_branch = repo['fix_branch'])],
+        error_message = "{name} cannot checkout `fix_branch` or `fix_branch`".format(**repo),
+        verbose = repo['verbose'])
 
     git(arg_list = ['merge', latest_hash],
-        error_message = "Cannot auto-merge {remote} {hash}".format(remote = origin_remote, hash = latest_hash),
-        verbose = verbose)
+        error_message = "{name} cannot merge `latest_hash` {latest_hash}".format(latest_hash = latest_hash, **repo),
+        verbose = repo['verbose'])
 
-    git(arg_list = ['commit', '-m', "{fix_commit}".format(fix_commit = fix_commit)],
-        error_message = "Cannot commit to {fix_branch}".format(fix_branch = fix_branch),
-        verbose = verbose)
+    git(arg_list = ['commit', '-m', "{fix_commit}".format(fix_commit = repo['fix_commit'])],
+        error_message = "{name} cannot commit to `fix_branch`".format(**repo),
+        verbose = repo['verbose'])
 
-    git(arg_list = ['checkout', "{remote}/{branch}".format(remote = origin_remote, branch = origin_branch)],
-        error_message = "Cannot checkout {remote}/{branch}".format(remote = origin_remote, branch = origin_branch),
-        verbose = verbose)
+    git(arg_list = ['checkout', "{origin_remote}/{origin_branch}".format(**repo)],
+        error_message = "{name} cannot checkout `origin_remote` or `origin_branch`".format(**repo),
+        verbose = repo['verbose'])
 
-    git(arg_list = ['merge', fix_branch],
-        error_message = "Cannot auto-merge {fix_branch}".format(fix_branch = fix_branch),
-        verbose = verbose)
+    git(arg_list = ['merge', repo['fix_branch']],
+        error_message = "{name} cannot auto-merge `fix_branch`".format(**repo),
+        verbose = repo['verbose'])
 
-    if not keep_fix_branch:
-        git(arg_list = ['branch', '--delete', fix_branch],
-            error_message = "Cannot delete {fix_branch}".format(fix_branch = fix_branch),
-            verbose = verbose)
+    if not repo['keep_fix_branch']:
+        git(arg_list = ['branch', '--delete', repo['fix_branch']],
+            error_message = "{name} cannot delete `fix_branch`".format(**repo),
+            verbose = repo['verbose'])
 
     out_message = "Finished fixing {dir}".format(dir = repo['dir'])
-    if not no_push:
-        git(arg_list = ['push', '--force', origin_remote, origin_branch],
-            error_message = "Cannot push {remote} {branch}".format(remote = origin_remote, branch = origin_branch),
-            verbose = verbose)
-        out_message = "Skipped pushing to {remote} {branch}".format(remote = source_remote, branch = source_branch)
+    if not repo['no_push']:
+        git(arg_list = ['push', '--force', repo['origin_remote'], repo['origin_branch']],
+            error_message = "{name} cannot push `origin_remote` or `origin_branch`".format(**repo),
+            verbose = repo['verbose'])
+
+        out_message = "{name} skipped pushing to `source_remote` `source_branch`".format(**repo)
 
     return {
         'code': 0,
@@ -247,39 +329,40 @@ def main(config_path):
     failed_list = []
     fixed_list = []
     with open(config_path, 'r') as configs_fd:
-        configs = json.load(configs_fd)
+        defaults = json.load(configs_fd)
 
-    for repo in configs['repos']:
+    for repo in defaults['repos']:
+        repo_configs = consolidate_repo_configs(defaults, repo)
         try:
-            status = fix(repo, configs)
+            status = fix(repo_configs)
         except GitException as e:
             failed_list.append({
-                'repository_dir': repo['dir'],
+                'repository_dir': repo_configs['dir'],
                 'message': e.message,
                 'code': e.status['code'],
                 'err': e.status['err'],
                 'out': e.status['out']
             })
-            if configs.get('verbose'):
-                print("{message} -> {dir}".format(message = e.message, dir = repo['dir']))
+            if repo_configs['verbose']:
+                print("{error_message}".format(error_message = e.message))
         else:
             status.update({
-                'repository_dir': repo['dir'],
-                'repository_source': repo['source']
+                'repository_dir': repo_configs['dir'],
+                'repository_source': repo_configs['source']
             })
             fixed_list.append(status)
-            if configs.get('verbose'):
-                print("Fixed and pushed -> {dir}".format(dir = repo['dir']))
+            if repo_configs['verbose']:
+                print("Fixed: {name}".format(**repo_configs))
 
-    if failed_list and configs['failed']:
-        with open(configs['failed'], 'a') as failed_fd:
+    if failed_list and repo_configs['failed']:
+        with open(repo_configs['failed'], 'a') as failed_fd:
             json.dump(failed_list, failed_fd)
-            print("Wrote failures to {failed}".format(failed = configs['failed']))
+            print("Wrote failures to -> {failed}".format(**repo_configs))
 
-    if fixed_list and configs['fixed']:
-        with open(configs['fixed'], 'a') as fixed_fd:
+    if fixed_list and repo_configs['fixed']:
+        with open(repo_configs['fixed'], 'a') as fixed_fd:
             json.dump({"fixed": fixed_list}, fixed_fd)
-            print("Wrote fixes to {fixed}".format(fixed = configs['fixed']))
+            print("Wrote fixes to -> {fixed}".format(repo_configs))
 
 
 if __name__ == '__main__':
