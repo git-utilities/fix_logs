@@ -45,7 +45,7 @@ def os_cd(path):
 
     **Throws**
 
-    - `TypeError` if path does not exist
+    - `Throws/Raises` if path does not exist
     """
     if os.path.isdir(path) is False:
         raise TypeError("No directory at {path}".format(path = path))
@@ -214,7 +214,7 @@ def consolidate_repo_configs(defaults, repo):
     return repo_configs
 
 
-def fix(repo):
+def fix_log(repo):
     """
     Attempts to fix git log for `repo`
 
@@ -334,7 +334,7 @@ def main(config_path):
     for repo in defaults['repos']:
         repo_configs = consolidate_repo_configs(defaults, repo)
         try:
-            status = fix(repo_configs)
+            status = fix_log(repo_configs)
         except GitException as e:
             failed_list.append({
                 'repository_dir': repo_configs['dir'],
