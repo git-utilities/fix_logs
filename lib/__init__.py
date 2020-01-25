@@ -4,6 +4,7 @@
 import json
 import os
 import subprocess
+import srblib
 
 
 __license__ = '''
@@ -36,6 +37,7 @@ class GitException(Exception):
 
     def __init__(self, message, status):
         super(GitException, self).__init__(message)
+        self.message = message
         self.status = status
 
 
@@ -47,10 +49,11 @@ def os_cd(path):
 
     - `Throws/Raises` if path does not exist
     """
-    if os.path.isdir(path) is False:
-        raise TypeError("No directory at {path}".format(path = path))
+    abspath = srblib.abs_path(path)
+    if os.path.isdir(abspath) is False:
+        raise TypeError("No directory at {abspath}".format(abspath = abspath))
 
-    os.chdir(os.path.abspath(path))
+    os.chdir(abspath)
 
 
 def run(cmd):
@@ -99,12 +102,17 @@ def git(arg_list, error_message, verbose = False):
         - if exit `code` is greater than `0`
         - or if `err` (Standard Error) contains output
     """
+    if verbose:
+        print("arg_list -> {}".format(arg_list))
+
     status = run(['git'] + arg_list)
-    if status['code'] > 0 or status['err']:
+    if status['code'] > 0 and status['err']:
         raise GitException(error_message, status)
+    elif status['err']:
+        print(status['err'].decode("utf-8"))
 
     if verbose:
-        print(status['out'])
+        print("status['out'] -> {}".format(status['out']))
 
     return status
 
@@ -117,7 +125,8 @@ def parent_directory_name(path):
 
         parent_directory_name = lambda path: os.path.abspath(path).split(os.path.sep)[-2]
     """
-    return os.path.abspath(path).split(os.path.sep)[-2]
+    return os.path.abspath(path).split(os.path.sep)[-1]
+    # return os.path.abspath(path).split(os.path.sep)[-2]
 
 
 def consolidate_repo_configs(defaults, repo):
@@ -244,11 +253,14 @@ def fix_log(repo):
 
         Cannot obtain `latest_hash` or `source_hash`
     """
+    os_cd(repo['dir'])
+
     git(arg_list = ['remote', 'add', repo['source_remote'], repo['source']],
         error_message = "{name} cannot add `source_remote` or `source`".format(**repo),
         verbose = repo['verbose'])
 
-    git(arg_list = ['fetch', repo['source_remote'], repo['source_branch']],
+    # git(arg_list = ['fetch', repo['source_remote'], "{source_branch}:{source_remote}/{source_branch}".format(**repo)],
+    git(arg_list = ['fetch', repo['source_remote']],
         error_message = "{name} cannot fetch `source_remote` or `source_branch`".format(**repo),
         verbose = repo['verbose'])
 
@@ -259,13 +271,13 @@ def fix_log(repo):
             origin_branch = repo['origin_branch'])],
         error_message = "{name} cannot retrieve hash for `origin_remote` or `origin_branch`".format(**repo),
         verbose = repo['verbose']
-    )['out']
+    )['out'].decode("utf-8")
 
     source_hash = git(
         arg_list = ['log', '-1', '--format="%h"', "{source_remote}/{source_branch}".format(**repo)],
         error_message = "{name} cannot retrieve hash for `source_remote` or `source_branch`".format(**repo),
         verbose = repo['verbose']
-    )['out']
+    )['out'].decode("utf-8")
 
     if not latest_hash or not source_hash:
         ValueError("cannot obtain `latest_hash` or `source_hash`")
@@ -314,7 +326,51 @@ def fix_log(repo):
     }
 
 
-def main(config_path):
+def fix_merge(repo):
+    """
+    **Returns** dictionary similar to `run(cmd)` function output
+
+    **Parameters**
+
+    - Expects `repo` to be a dictionary similar to...
+
+        {
+            "dir": "_local-git-directory_",
+            "source": "_remote-git-url_",
+            "name": "repo-name",
+            "origin_branch": "master",
+            "origin_remote": "origin",
+            "source_branch": "master",
+            "source_remote": "source",
+            "fix_branch": "fix",
+            "fix_commit": "Fixes logs",
+            "keep_fix_branch": false,
+            "no_push": false
+        }
+
+    **Raises**
+
+    - `ValueError` with message similar to...
+
+        Cannot obtain `latest_hash` or `source_hash`
+    """
+    git(['mergetool'], "cannot resolve conflicts", True)
+    out_message = "Finished fixing {dir}".format(dir = repo['dir'])
+    if not repo['no_push']:
+        git(arg_list = ['push', '--force', repo['origin_remote'], repo['origin_branch']],
+            error_message = "{name} cannot push `origin_remote` or `origin_branch`".format(**repo),
+            verbose = repo['verbose'])
+
+        out_message = "{name} skipped pushing to `source_remote` `source_branch`".format(**repo)
+
+    return {
+        'code': 0,
+        'err': '',
+        'out': out_message
+    }
+
+
+def fix_logs_main(args):
     """
     Parses `config.json` file and loops over each repository within `config['repos']`
 
@@ -326,11 +382,25 @@ def main(config_path):
 
     - `config_path` String, path to `config.json` configuration file
     """
+    git_dir = "{}".format(os.path.sep).join(__file__.split(os.path.sep)[0:-2])
+    with open(args.get('config', './config.json'), 'r') as configs_fd:
+        configs = json.load(configs_fd)
+
+    defaults = {
+        'origin_branch': args.get('origin_branch', configs.get('origin_branch')),
+        'origin_remote': args.get('origin_remote', configs.get('origin_remote')),
+        'source_branch': args.get('source_branch', configs.get('source_branch')),
+        'source_remote': args.get('source_remote', configs.get('source_remote')),
+        'fix_branch': args.get('fix_branch', configs.get('fix_branch')),
+        'fix_commit': args.get('fix_commit', configs.get('fix_commit')),
+        'keep_fix_branch': args.get('keep_fix_branch', configs.get('keep_fix_branch')),
+        'no_push': args.get('no_push', configs.get('no_push')),
+        'verbose': args.get('verbose', configs.get('verbose')),
+        'repos': configs['repos'],
+    }
+
     failed_list = []
     fixed_list = []
-    with open(config_path, 'r') as configs_fd:
-        defaults = json.load(configs_fd)
-
     for repo in defaults['repos']:
         repo_configs = consolidate_repo_configs(defaults, repo)
         try:
@@ -340,8 +410,8 @@ def main(config_path):
                 'repository_dir': repo_configs['dir'],
                 'message': e.message,
                 'code': e.status['code'],
-                'err': e.status['err'],
-                'out': e.status['out']
+                'err': e.status['err'].decode("utf-8"),
+                'out': e.status['out'].decode("utf-8"),
             })
             if repo_configs['verbose']:
                 print("{error_message}".format(error_message = e.message))
@@ -354,15 +424,19 @@ def main(config_path):
             if repo_configs['verbose']:
                 print("Fixed: {name}".format(**repo_configs))
 
-    if failed_list and repo_configs['failed']:
-        with open(repo_configs['failed'], 'a') as failed_fd:
-            json.dump(failed_list, failed_fd)
-            print("Wrote failures to -> {failed}".format(**repo_configs))
+    os_cd(git_dir)
+    if failed_list and configs['failed']:
+        failed_abspath = srblib.abs_path(configs['failed'])
+        print("failed_abspath -> {}".format(failed_abspath))
+        with open(failed_abspath, 'w') as failed_fd:
+            json.dump({'failed': failed_list}, failed_fd)
+            print("Wrote failures to -> {failed}".format(**configs))
 
-    if fixed_list and repo_configs['fixed']:
-        with open(repo_configs['fixed'], 'a') as fixed_fd:
+    if fixed_list and configs['fixed']:
+        fixed_abspath = srblib.abs_path(configs['fixed'])
+        with open(fixed_abspath, 'w') as fixed_fd:
             json.dump({"fixed": fixed_list}, fixed_fd)
-            print("Wrote fixes to -> {fixed}".format(repo_configs))
+            print("Wrote fixes to -> {fixed}".format(configs))
 
 
 if __name__ == '__main__':

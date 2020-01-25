@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 
-import lib
 import argparse
 import sys
+
+from lib import fix_logs_main
 
 
 __about__ = '''
@@ -80,14 +81,14 @@ parser.add_argument('--verbose',
                     action = 'store_true',
                     help = 'Prints command standard out if set')
 
-args_dict = vars(parser.parse_args())
+args = vars(parser.parse_args())
 
-if args_dict['about']:
+if args['about']:
     print(__about__)
     sys.exit()
 
-if args_dict['license']:
+if args['license']:
     print(__license__)
     sys.exit()
 
-lib.main(args_dict['config'])
+fix_logs_main(args)
