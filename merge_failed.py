@@ -5,7 +5,13 @@ import argparse
 import json
 import sys
 
-from lib import (git, GitException, os_cd, parent_directory_name)
+from lib import (
+    fix_merge,
+    git,
+    GitException,
+    os_cd,
+    parent_directory_name,
+)
 
 
 __about__ = '''
@@ -40,61 +46,23 @@ if __name__ != '__main__':
     raise NotImplementedError("Try running as a script, eg. python file-name.py --help")
 
 
-def fix_merge(repo):
-    """
-    """
-    git(['mergetool'], "cannot resolve conflicts", True)
-    out_message = "Finished fixing {dir}".format(dir = repo['dir'])
-    if not repo['no_push']:
-        git(arg_list = ['push', '--force', repo['origin_remote'], repo['origin_branch']],
-            error_message = "{name} cannot push `origin_remote` or `origin_branch`".format(**repo),
-            verbose = repo['verbose'])
-
-        out_message = "{name} skipped pushing to `source_remote` `source_branch`".format(**repo)
-
-    return {
-        'code': 0,
-        'err': '',
-        'out': out_message
-    }
-
-
-def main(args_dict):
+def main(args):
     """
     **Parameters**
 
-    - `args_dict`, expects dictionary similar to...
-
-        {
-            "about": None,
-            "failed": "./failed.json",
-            "license": None,
-            "verbose": True,
-        }
+    - `config_path` String, path to `failed.json` log file
 
     **Example**
 
-        main({"failed": "./failed.json", "verbose": True})
-
-    **Returns**
-
-        {
-            "merged": [
-                'repository_dir': "repo['repository_dir']",
-                'repository_source': "repo['source']",
-            ],
-
-            "failed": [
-                'repository_dir': "repo['repository_dir']",
-                'message': "e.message",
-                'code': "e.status['code']",
-                'err': "e.status['err']",
-                'out': "e.status['out']",
-            ]
-        }
+        main("./failed.json")
     """
-    with open(args_dict['failed'], 'r') as failed_fd:
+    with open(args.get('failed', './failed.json'), 'r') as failed_fd:
         failed_json = json.load(failed_fd)
+
+    defaults = {
+        'no_push': args.get('no_push', failed_json.get('no_push')),
+        'verbose': args.get('verbose', failed_json.get('verbose'))
+    }
 
     conflicts_list = []
     merged_list = []
@@ -122,10 +90,15 @@ def main(args_dict):
             if args_dict['verbose']:
                 print("Fixed: {}".format(parent_directory_name(repo['repository_dir'])))
 
-    return {
-        "conflicts": conflicts_list,
-        "merged": merged_list,
-    }
+    if conflicts_list:
+        with open('conflicts.json', 'a') as conflicts_fd:
+            json.dump(conflicts_list, conflicts_fd)
+            print("Wrote conflicts to -> conflicts.json")
+
+    if merged_list:
+        with open('merged.json', 'a') as merged_fd:
+            json.dump(merged_list, merged_fd)
+            print("Wrote merged to -> merged.json")
 
 
 parser = argparse.ArgumentParser(description = __description__)
@@ -157,16 +130,4 @@ if args_dict['license']:
     sys.exit()
 
 
-results = main(args_dict)
-conflicts = results.get('conflicts')
-if conflicts:
-    with open('conflicts.json', 'a') as conflicts_fd:
-        json.dump(conflicts, conflicts_fd)
-        print("Wrote conflicts to -> conflicts.json")
-
-
-merged = results.get('merged')
-if merged:
-    with open('merged.json', 'a') as merged_fd:
-        json.dump(merged, merged_fd)
-        print("Wrote merged to -> merged.json")
+main(args_dict)
