@@ -44,7 +44,9 @@ Simple Python script that attempts to fix Git logs automatically.
   "&#x1F3D7; What is needed prior to making use of this repository"
 
 
-Other than installing Git and Python (version 3 or greater), there shouldn't by anything extra required. This script makes use of the following built-in Python libraries...
+The Git command line utility is required for doing version management stuff.
+
+This script makes use of the following built-in Python libraries...
 
 
 ```
@@ -56,7 +58,28 @@ sys
 ```
 
 
-... It is also a good idea to learn how to [resolve merge conflicts](https://stackoverflow.com/questions/161813/how-to-resolve-merge-conflicts-in-git)
+Pip install additional requirements via...
+
+
+```Bash
+pip install --user -r requirements.txt
+```
+
+
+It is also a good idea to learn how to [resolve merge conflicts](https://stackoverflow.com/questions/161813/how-to-resolve-merge-conflicts-in-git)
+
+
+Optionally see [Python Guide -- `virtualenvs`](https://docs.python-guide.org/dev/virtualenvs/) for information on running this project, and it's dependencies, within a _Virtual Environment_, TLD...
+
+
+```Bash
+pip3 install --user pipenv
+
+pipenv install -r requirements.txt
+
+# pipenv run python3 fix_logs.py
+# pipenv run python3 merge_failed.py
+```
 
 
 ___
@@ -333,10 +356,17 @@ ___
 
 - [StackOverflow -- how to resolve merge conflicts in git](https://stackoverflow.com/questions/161813)
 
+- [StackOverflow -- How to get an absolute file path in Python](https://stackoverflow.com/a/54190233)
+
+- [StackOverflow -- Convert bytes to a string](https://stackoverflow.com/questions/606191)
+
+- [StackOverflow -- How can I find scripts directory with Python](https://stackoverflow.com/questions/4934806)
+
 - [Python Docs -- `argparse`](https://docs.python.org/3/howto/argparse.html)
 
 - [Gist Cheat Sheet -- `vimdiff`](https://gist.github.com/azadkuh/5d223d46a8c269dadfe4)
 
+- [Python Guide -- `virtualenvs`](https://docs.python-guide.org/dev/virtualenvs/)
 
 ___
 
