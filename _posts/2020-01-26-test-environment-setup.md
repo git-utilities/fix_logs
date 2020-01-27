@@ -90,7 +90,7 @@ ___
 [heading__setup_repositories_for_testing]: #setup-repositories-for-testing
 
 
-1. Clone `llSourcell` and push to `tests` remote...
+- Clone `llSourcell` and push to `tests` remote...
 
 
 ```Bash
@@ -109,7 +109,7 @@ git push origin master
 ```
 
 
-2. Clone `How-to-Predict-Stock-Prices-Easily-Demo` and push to `tests` remote...
+- Clone `How-to-Predict-Stock-Prices-Easily-Demo` and push to `tests` remote...
 
 
 ```Bash
@@ -127,7 +127,7 @@ git push origin master
 ```
 
 
-3. Clone `How_to_simulate_a_self_driving_car` and push to `tests` remote...
+- Clone `How_to_simulate_a_self_driving_car` and push to `tests` remote...
 
 
 ```Bash
