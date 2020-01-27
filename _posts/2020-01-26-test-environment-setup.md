@@ -7,7 +7,7 @@ categories: git tests
 
 
 
-This is a quick guide on testing scripts of this project without pushing results to GitHub.
+This is a quick guide on testing scripts of this project **without** pushing results to GitHub, and is intended reading material for those that wish to assist in adding features, stomping bugs, etc.
 
 
 ------
