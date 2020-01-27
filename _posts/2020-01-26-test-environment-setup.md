@@ -31,7 +31,7 @@ This is a quick guide on testing scripts of this project without pushing results
 
 
 ## Requirements
-[heading__requirements]: #requirements ""
+[heading__requirements]: #requirements
 
 
 This guide makes use of;
@@ -49,7 +49,7 @@ ___
 
 
 ## Append to SSH config
-[heading__append_to_ssh_config]: #append-to-ssh-config ""
+[heading__append_to_ssh_config]: #append-to-ssh-config
 
 
 Add `tests` host to SSH configurations...
@@ -70,7 +70,7 @@ ___
 
 
 ## Add Git Shell Restricted User
-[heading__add_git_shell_restricted_user]: #add-git-shell-restricted-user ""
+[heading__add_git_shell_restricted_user]: #add-git-shell-restricted-user
 
 
 ```Bash
@@ -87,7 +87,7 @@ ___
 
 
 ## Setup Repositories for Testing
-[heading__setup_repositories_for_testing]: #setup-repositories-for-testing ""
+[heading__setup_repositories_for_testing]: #setup-repositories-for-testing
 
 
 1. Clone `llSourcell` and push to `tests` remote...
@@ -149,7 +149,7 @@ ___
 
 
 ## Test Fix Logs script
-[heading__test_fix_logs_script]: #test-fix-logs-script ""
+[heading__test_fix_logs_script]: #test-fix-logs-script
 
 
 ```Bash
@@ -163,7 +163,7 @@ ___
 
 
 ## Attribution
-[heading__attribution]: #attribution ""
+[heading__attribution]: #attribution
 
 
 - [Git Docs -- git-shell](https://git-scm.com/docs/git-shell)
