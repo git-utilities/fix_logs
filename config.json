@@ -239,6 +239,14 @@
     {
       "dir": "~/git/hub/llSourcell/How_to_generate_music_in_tensorflow_LIVE",
       "source": "git@github.com/Conchylicultor/MusicGenerator.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/How-to-Build-a-Biomedical-Startup",
+      "source": "git@github.com/rxlabz/sytody.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Watch-Me-Build-a-Trading-Bot",
+      "source": "git@github.com/askmike/gekko.git"
     }
   ]
 }
