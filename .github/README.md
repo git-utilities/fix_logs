@@ -4,22 +4,21 @@
   "&#x2B06; Top of ReadMe File"
 
 
-Simple Python script that attempts to fix Git logs automatically.
+Python scripts to assists with Git merging origin over source  en-mass.
+
+
+- when multiple remote repositories are missing license files, and/or commit history from a Fork gone wrong
+
+- when one or two _`git push --force remote branch`_ commands isn't enough
+
+- for categorizing multiple repositories that cannot be automatically fixed and pushed; as well as why
 
 
 ## [![Byte size of fix_logs][badge__master__fix_logs__source_code]][fix_logs__master__source_code] [![Open Issues][badge__issues__fix_logs]][issues__fix_logs] [![Open Pull Requests][badge__pull_requests__fix_logs]][pull_requests__fix_logs] [![Latest commits][badge__commits__fix_logs__master]][commits__fix_logs__master]
 
 
->  Let's not fixate on how or why Git logs may be incomplete, and instead focus on solutions for making corrective actions more manageable!
-
-
 ------
 
-
-#### Table of Contents
-
-
-- [:arrow_up: Top of ReadMe File][heading__title]
 
 - [:building_construction: Requirements][heading__requirements]
 
@@ -277,7 +276,7 @@ ___
   "&#x1F41A; Bash example for correcting a single git log"
 
 
-Bash example for correcting a single git log
+Bash example for correcting a single git repository
 
 
 ```Bash
@@ -362,6 +361,10 @@ ___
 
 - [StackOverflow -- How can I find scripts directory with Python](https://stackoverflow.com/questions/4934806)
 
+- [StackOverflow -- Bash -- Read a file line by line assigning the value to a variable](https://stackoverflow.com/questions/10929453)
+
+- [StackOverflow -- Retroactively forking a project on GitHub](https://stackoverflow.com/questions/48120641)
+
 - [Python Docs -- `argparse`](https://docs.python.org/3/howto/argparse.html)
 
 - [Gist Cheat Sheet -- `vimdiff`](https://gist.github.com/azadkuh/5d223d46a8c269dadfe4)
@@ -396,6 +399,13 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
+
+
+------
+
+- [:arrow_up: Top of ReadMe File][heading__title]
+
+------
 
 
 
