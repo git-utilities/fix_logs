@@ -14,7 +14,7 @@
   "repos": [
     {
       "dir": "~/git/hub/llSourcell/Bitcoin_Trading_Bot",
-      "source": "https://github.com/jaungiers/Multidimensional-LSTM-BitCoin-Time-Series.git"
+      "source": "git@github.com:jaungiers/Multidimensional-LSTM-BitCoin-Time-Series.git"
     },
     {
       "dir": "~/git/hub/llSourcell/How-to-Predict-Stock-Prices-Easily-Demo",
@@ -23,6 +23,222 @@
     {
       "dir": "~/git/hub/llSourcell/How_to_simulate_a_self_driving_car",
       "source": "git@github.com:naokishibuya/car-behavioral-cloning.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/A_Guide_to_Running_Tensorflow_Models_on_Android",
+      "source": "git@github.com:mari-linhares/mnist-android-tensorflow.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/AI_for_Financial_Data",
+      "source": "git@github.com:cloudacademy/fraud-detection.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/AI_in_Finance",
+      "source": "git@github.com:austintackaberry/stocks.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/how_to_build_a_bitcoin_startup",
+      "source": "git@github.com:naptha/tesseract.js.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/How_to_Build_a_healthcare_startup",
+      "source": "git@github.com:shaqian/flutter_realtime_detection.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Watch-Me-Build-an-Education-Startup",
+      "source": "git@github.com:HendrikStrobelt/detecting-fake-text.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Decentralized_Chat",
+      "source": "git@github.com:gballet/whisper-chat-example.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Build-a-Retail-Startup",
+      "source": "git@github.com:huextrat/TheGorgeousLogin.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/chatbot_tutorial",
+      "source": "git@github.com:Conchylicultor/DeepQA.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Convolutional_neural_network",
+      "source": "git@github.com:greydanus/pythonic_ocr.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/A-Guide-to-DeepMinds-StarCraft-AI-Environment",
+      "source": "git@github.com:chris-chris/pysc2-examples.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Pokemon_GAN",
+      "source": "git@github.com:moxiegushi/pokeGAN.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Drone_Flight_Controller",
+      "source": "git@github.com:sksq96/deep-rl-quadcopter.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Simple_Blockchain_in_5_Minutes",
+      "source": "git@github.com:howCodeORG/Simple-Python-Blockchain.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/SQL_Database_Optimization",
+      "source": "git@github.com:xiaojunxu/SQLNet.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Introduction_Move37",
+      "source": "git@github.com:mohitd/gridworld.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Sensor_Networks",
+      "source": "git@github.com/kevlar1818/grid-world-rl.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Pytorch_Coding_Challenge_LIVE",
+      "source": "git@github.com/bozhang0504/kaggle-invasive-species-monitoring-pytorch.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/logistic_regression",
+      "source": "git@github.com/guillermo-carrasco/logistic-sentiment.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Best-Programming-Languages-for-Machine-Learning",
+      "source": "git@github.com/chribsen/simple-machine-learning-examples.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Amazon_Training_Video",
+      "source": "git@github.com/KelvinOyanna/Churn-Prediction.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/kaggle_challenge",
+      "source": "git@github.com/rebeccak1/nyc-taxi.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/MindMathGame",
+      "source": "git@github.com/KrasimirZl/MindMathGame.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/backpropagation_explained",
+      "source": "git@github.com/mattnedrich/GradientDescentExample.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Modeling_Evolution_with_TensorflowJS",
+      "source": "git@github.com/adityathebe/evolutionSimulator.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/wiki_generator_live",
+      "source": "git@github.com/kumikokashii/lstm-text-generator.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/self_driving_cars_explained",
+      "source": "git@github.com/upul/Behavioral-Cloning.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/AI_for_Resumes",
+      "source": "git@github.com/dennybritz/cnn-text-classification-tf.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/capsule_networks",
+      "source": "git@github.com/naturomics/CapsNet-Tensorflow.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Landing-a-SpaceX-Falcon-Heavy-Rocket",
+      "source": "git@github.com/EmbersArc/PPO.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/AI_in_Medicine_Clinical_Imaging_Classification",
+      "source": "git@github.com/gregwchase/dsi-capstone.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Decentralized_Rides",
+      "source": "git@github.com/Oponn-1/Stride-Tokens.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Make_Money_with_Tensorflow",
+      "source": "git@github.com/amiyapatanaik/tensorflow-serving-docker-image.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/HashGraph_Explained",
+      "source": "git@github.com/Lapin0t/py-swirld.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Neural_Network_Voices",
+      "source": "git@github.com/andabi/deep-voice-conversion.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Progressive_GANs",
+      "source": "git@github.com/tkarras/progressive_growing_of_gans.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Ripple_Explained",
+      "source": "git@github.com/jatchili/minimalist-ripple-client.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/3D_Pose_Estimation",
+      "source": "git@github.com/una-dinosauria/3d-pose-baseline.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/neuroevolution-for-flappy-birds",
+      "source": "git@github.com/rsk2327/NEAT_FlappyBird.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/machine_learning_and_neuroscience",
+      "source": "git@github.com/NeurophysVis/SpectraVis.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/deepfakes",
+      "source": "git@github.com/deepfakes/faceswap.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/bitcoin_prediction",
+      "source": "git@github.com/Sapphirine/BITCOIN-PRICE-PREDICTION-USING-SENTIMENT-ANALYSIS.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/alphago_demo",
+      "source": "git@github.com/brilee/MuGo.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/proof_of_existence_demo",
+      "source": "git@github.com/maraoz/solidity-experiments.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/blockchain_consensus",
+      "source": "git@github.com/tenthirtyone/Proof_of_Work.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Movie_Recommender",
+      "source": "git@github.com/amznlabs/amazon-dsstne.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/Generative_Adversarial_networks_LIVE",
+      "source": "git@github.com/jonbruner/ezgan.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/differentiable_neural_computer_LIVE",
+      "source": "git@github.com/claymcleod/tf-differentiable-neural-computer.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/GANS-for-style-transfer",
+      "source": "git@github.com/ChunyuanLI/DiscoGAN.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/how_to_convert_text_to_images",
+      "source": "git@github.com/hanzhanggit/StackGAN.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/how_to_generate_images_with_tensorflow_LIVE",
+      "source": "git@github.com/bluebelmont/Variational-Autoencoder.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/seq2seq_model_live",
+      "source": "git@github.com/ematvey/tensorflow-seq2seq-tutorials.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/How_to_make_a_language_translator",
+      "source": "git@github.com/fanshi118/NLP_NMT_Project.git"
+    },
+    {
+      "dir": "~/git/hub/llSourcell/How_to_generate_music_in_tensorflow_LIVE",
+      "source": "git@github.com/Conchylicultor/MusicGenerator.git"
     }
   ]
 }
