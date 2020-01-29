@@ -252,6 +252,54 @@ git mergetool
 > See [Gist -- Git mergetool tutorial](https://gist.github.com/karenyyng/f19ff75c60f18b4b8149) for quick tips on how to utilize `vimdiff` as well as more examples of resolving merge conflicts.
 
 
+- Option 4, check documentation [merge strategy](https://git-scm.com/docs/merge-strategies) for the `-Xours` strategy
+
+
+```Bash
+git merge --abort
+
+git merge -Xours test_master
+
+cat example.sh
+```
+
+> Example output from `cat example.sh`
+
+
+```Bash
+#!/bin/bash
+_name="$1"
+
+if [ ${#_name} == 0 ]; then
+  _name='world'
+fi
+
+echo "Hello ${_name}!"
+```
+
+
+- Option 5, check documentation [merge strategy](https://git-scm.com/docs/merge-strategies) for the `-Xtheirs` strategy
+
+
+```Bash
+git merge --abort
+
+git merge -Xtheirs test_master
+
+cat example.sh
+```
+
+
+> Example output from `cat example.sh`
+
+
+```Bash
+#!/usr/bin/env bash
+
+printf 'Hello %s!\n' "${1:-world}"
+```
+
+
 ------
 
 
@@ -323,5 +371,7 @@ ___
 
 
 - [Git documentation -- `git mergetool`](https://www.git-scm.com/docs/git-mergetool)
+
+- [Git documentation --  `git merge -X_strategy_`](https://git-scm.com/docs/merge-strategies)
 
 - [Gist -- Git mergetool tutorial](https://gist.github.com/karenyyng/f19ff75c60f18b4b8149)
