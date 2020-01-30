@@ -290,9 +290,16 @@ def fix_log(repo):
         error_message = "{name} cannot checkout `fix_branch` or `fix_branch`".format(**repo),
         verbose = repo['verbose'])
 
-    git(arg_list = ['merge', latest_hash],
-        error_message = "{name} cannot merge `latest_hash` {latest_hash}".format(latest_hash = latest_hash, **repo),
-        verbose = repo['verbose'])
+    if repo.get('merge_strategy'):
+        git(arg_list = ['merge', "-X{merge_strategy}".format_map(**repo), latest_hash],
+            error_message = "{name} cannot merge `latest_hash` {latest_hash}".format(
+                latest_hash = latest_hash, **repo),
+            verbose = repo['verbose'])
+    else:
+        git(arg_list = ['merge', latest_hash],
+            error_message = "{name} cannot merge `latest_hash` {latest_hash}".format(
+                latest_hash = latest_hash, **repo),
+            verbose = repo['verbose'])
 
     git(arg_list = ['commit', '-m', "{fix_commit}".format(fix_commit = repo['fix_commit'])],
         error_message = "{name} cannot commit to `fix_branch`".format(**repo),

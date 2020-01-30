@@ -49,6 +49,10 @@ parser.add_argument('--config',
                     default = './config.json',
                     help = 'Path to config.json file')
 
+parser.add_argument('--merge_strategy',
+                    default = 'source',
+                    help = 'Git merge strategy to use, check `git help merge | less -p "-X <option>"`')
+
 parser.add_argument('--origin_branch',
                     default = 'master',
                     help = 'Git branch name to merge source `source_branch` with')
