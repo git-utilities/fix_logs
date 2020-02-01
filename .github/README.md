@@ -235,8 +235,16 @@ Example **`fixed.json`** data...
 {
   "fixed": [
     {
-      "repository_dir": "~/git/hub/account-name/Bitcoin_Trading_Bot",
-      "repository_source": "https://github.com/jaungiers/Multidimensional-LSTM-BitCoin-Time-Series.git",
+      "dir": "~/git/hub/account-name/Bitcoin_Trading_Bot",
+      "source": "https://github.com/jaungiers/Multidimensional-LSTM-BitCoin-Time-Series.git",
+      "origin_branch": "master",
+      "origin_remote": "origin",
+      "source_branch": "master",
+      "source_remote": "source",
+      "fix_branch": "fix",
+      "fix_commit": "Fixes logs",
+      "keep_fix_branch": false,
+      "no_push": false,
       "code": 0,
       "err": "",
       "out": "Finished fixing /home/user-name/git/hub/account-name/Bitcoin_Trading_Bot"
@@ -253,7 +261,16 @@ Example **`failed.json`** data...
 {
   "failed": [
     {
-      "repository_dir": "/home/user-name/git/hub/account-name/repo-name",
+      "dir": "/home/user-name/git/hub/account-name/repo-name",
+      "source": "https://github.com/author/project.git",
+      "origin_branch": "master",
+      "origin_remote": "hub",
+      "source_branch": "tests",
+      "source_remote": "source",
+      "fix_branch": "fix-merge",
+      "fix_commit": "Fixes logs",
+      "keep_fix_branch": false,
+      "no_push": true,
       "message": "Cannot auto-merge <remote> <hash>",
       "code": "1",
       "err": "e.run['err']",
@@ -292,8 +309,10 @@ git checkout a8aaab3
 # Use a temporary `fix` branch to _quarantine_ possible conflicts
 git checkout -b fix-fork
 
-# Last commit ref (git hash) of origin/master
+# Merge last commit ref (git hash) of origin/master
 git merge 91d9d98
+# git merge -X theirs 91d9d98
+# Note, using `-X theirs` strategy instead may reduce chances of conflict
 
 #
 ## Handle any marge conflicts before proceeding
@@ -336,6 +355,8 @@ ___
   #attribution
   "&#x1F4C7; Resources that where helpful in building this project so far."
 
+
+- [Git documentation -- merge strategies](https://git-scm.com/docs/merge-strategies)
 
 - [StackOverflow -- storing python dictionaries](https://stackoverflow.com/questions/7100125)
 
