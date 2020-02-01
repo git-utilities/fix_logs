@@ -413,21 +413,19 @@ def fix_logs_main(args):
         try:
             status = fix_log(repo_configs)
         except GitException as e:
-            failed_list.append({
-                'repository_dir': repo_configs['dir'],
+            repo_configs.update(status)
+            repo_configs.update({
                 'message': e.message,
                 'code': e.status['code'],
-                'err': e.status['err'].decode("utf-8"),
-                'out': e.status['out'].decode("utf-8"),
+                'err': e.status['err'],
+                'out': e.status['out']
             })
+            failed_list.append(repo_configs)
             if repo_configs['verbose']:
                 print("{error_message}".format(error_message = e.message))
         else:
-            status.update({
-                'repository_dir': repo_configs['dir'],
-                'repository_source': repo_configs['source']
-            })
-            fixed_list.append(status)
+            repo_configs.update(status)
+            fixed_list.append(repo_configs)
             if repo_configs['verbose']:
                 print("Fixed: {name}".format(**repo_configs))
 

@@ -66,38 +66,36 @@ def main(args):
 
     conflicts_list = []
     merged_list = []
-    for repo in failed_json:
-        os_cd(repo['repository_dir'])
+    for repo in failed_json['failed']:
+        os_cd(repo['dir'])
 
         try:
             status = git(['mergetool'], "cannot resolve conflicts", True)
         except GitException as e:
-            conflicts_list.append({
-                'repository_dir': repo['repository_dir'],
+            repo.update(status)
+            repo.update({
                 'message': e.message,
                 'code': e.status['code'],
                 'err': e.status['err'],
                 'out': e.status['out']
             })
+            conflicts_list.append(repo)
             if args_dict['verbose']:
                 print("{error_message}".format(error_message = e.message))
         else:
-            status.update({
-                'repository_dir': repo['repository_dir'],
-                'repository_source': repo['source']
-            })
-            merged_list.append(status)
+            repo.update(status)
+            merged_list.append(repo)
             if args_dict['verbose']:
-                print("Fixed: {}".format(parent_directory_name(repo['repository_dir'])))
+                print("Fixed: {}".format(parent_directory_name(repo['dir'])))
 
     if conflicts_list:
-        with open('conflicts.json', 'a') as conflicts_fd:
-            json.dump(conflicts_list, conflicts_fd)
+        with open('conflicts.json', 'w') as conflicts_fd:
+            json.dump({'conflicts': conflicts_list}, conflicts_fd)
             print("Wrote conflicts to -> conflicts.json")
 
     if merged_list:
-        with open('merged.json', 'a') as merged_fd:
-            json.dump(merged_list, merged_fd)
+        with open('merged.json', 'w') as merged_fd:
+            json.dump({'merged': merged_list}, merged_fd)
             print("Wrote merged to -> merged.json")
 
 
