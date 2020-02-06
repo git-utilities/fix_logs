@@ -50,7 +50,7 @@ parser.add_argument('--config',
                     help = 'Path to config.json file')
 
 parser.add_argument('--merge_strategy',
-                    default = 'source',
+                    default = None,
                     help = 'Git merge strategy to use, check `git help merge | less -p "-X <option>"`')
 
 parser.add_argument('--origin_branch',
@@ -59,7 +59,7 @@ parser.add_argument('--origin_branch',
 
 parser.add_argument('--origin_remote',
                     default = 'origin',
-                    help = 'Get remote name to push changes to')
+                    help = 'Git remote name to push changes to')
 
 parser.add_argument('--source_branch',
                     default = 'master',
@@ -68,6 +68,14 @@ parser.add_argument('--source_branch',
 parser.add_argument('--source_remote',
                     default = 'source',
                     help = 'Git remote name to fetch log corrections from')
+
+parser.add_argument('--fix_branch',
+                    default = "fix",
+                    help = 'Git branch name for triaging possible merge conflicts')
+
+parser.add_argument('--fix_commit',
+                    default = "Fixes logs",
+                    help = 'Git commit message for successful automatic merges')
 
 parser.add_argument('--no_push',
                     action = 'store_true',
