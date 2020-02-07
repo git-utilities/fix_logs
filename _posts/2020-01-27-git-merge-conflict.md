@@ -12,9 +12,9 @@ Throughout this short guide it is a good idea to use the `git log` command to ch
 ------
 
 
-- [Generating a Merge Conflict]
-
 - [Setup New Repository]
+
+- [Generating a Merge Conflict]
 
 - [Attribution]
 
